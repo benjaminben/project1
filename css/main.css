@@ -15,4 +15,13 @@ canvas {
 	margin: 0 auto;
 /*	height: 100%;
 	width: 100%;*/
+
+}
+
+#score{
+	position: absolute;
+	right: 5%;
+	top: 0px;
+	z-index: 5;
+	font-size: 30px;
 }
