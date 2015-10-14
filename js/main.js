@@ -17,10 +17,28 @@
 var canvas = document.getElementById("theCanvas");
 var ctx = canvas.getContext("2d");
 
+// var count = 0;
+// var animX;
+// var animY;
+
+// // var img = new Image();
+// // img.src = "/assets/asteroid_sprites.png";
+// // img.onload = draw;
+
+// // function draw(){
+// // 	requestAnimationFrame(draw);
+// // 	animX = (count % 9) * 128;
+// // 	animY = Math.floor(count / 9) * 128;
+// // 	ctx.drawImage(img, animX, animY, 128, 128, 100, 100, 128, 128);
+// // 	if(count == 149)
+// // 		count = 0;
+// // 	else
+// // 		count++
+// // }
+
 var startTime;
 var now = Date.now();
-var dt;
-var rockRate = 1000;
+var rockRate = 3000;
 
 // window.requestAnimFram = (function (callback){
 // 	return window.requestAnimationFrame || 
@@ -77,7 +95,7 @@ var spacePressed = false;
 var isGameOver;
 
 var rocks = [];
-var hitRocks = [];
+var hitRocks = 0;
 
 var isInvincible = false;
 
@@ -88,6 +106,7 @@ var Rock = function(radius, x, y){
 	this.width = radius * 2;
 	this.height = radius * 2;
 	this.vertShift = 0;
+	this.hit = false;
 }
 
 var Shot = function(x, y){
@@ -104,7 +123,9 @@ var Shot = function(x, y){
 setInterval(function(){
 	if (dx < 9) dx++;
 }, 10000);
-
+setInterval(function(){
+	if (rockRate > 750) rockRate -= 250;
+}, 15000);
 
 //MAIN LOOP
 var game;
@@ -186,7 +207,7 @@ function gameLoop(){
 	drawShip();
 	drawShot();
 
-	console.log(rocks);
+	// console.log(rocks);
 
 	//SHOOTING
 	if (spacePressed && shots.length <= 1){
@@ -198,11 +219,13 @@ function gameLoop(){
 		rocks[i].x -= dx;
 		rocks[i].y += rocks[i].vertShift;
 		if (rocks[i].x < 0-rocks[i].radius) {
-			if (isGameOver === false) score += Math.round(100 * rocks[i].radius);
-			rocks.splice(rocks[i], 1);
-			if (hitRocks.indexOf(rocks[i])) {
-				hitRocks = [];
+			if (!isGameOver) score += Math.round(100 * rocks[i].radius);
+			if (rocks[i].hit){
+				console.log("hitRocks", hitRocks);
+				hitRocks--;	
 			}
+			if(rocks[i])
+			rocks.splice(rocks[i], 1);
 		}	
 	}
 
@@ -222,7 +245,7 @@ function gameLoop(){
 			if (shotHit(shots[i], rocks[j])){
 				// console.log('boom');
 				shots.splice(shots[i], 1);
-				hitRock(rocks[j]);
+				hitRock(rocks[j], j);
 				// hit = true;
 				break;
 			}
@@ -255,16 +278,19 @@ function gameLoop(){
     gameOver();
 }
 
-function hitRock(rock){
+function hitRock(rock, idx){
 	rock.radius = rock.radius / 2;
 	rock.vertShift = -1;
+	rock.hit = true;
 	score += Math.round(50 * rock.radius);
 	var newRock = new Rock(rock.radius, rock.x, rock.y);
 	newRock.vertShift = -rock.vertShift;
+	newRock.hit = true;
 	// console.log(rocks);
-	rocks.push(newRock);
-	hitRocks.push(newRock);
-	hitRocks.push(rock);
+	rocks.splice(idx, 0, newRock);
+	hitRocks += 2;
+	// hitRocks.push(newRock);
+	// hitRocks.push(rock);
 	// console.log(hitRocks)
 }
 
@@ -289,20 +315,17 @@ function createRocks(numRocks){
 	var rock = new Rock(radius, x, y);
 
 	// rocks.push(rock);
-	
-	var timerId = setInterval(function() {
-		
+	setTimeout(createRock, rockRate);
+	function createRock(){		
 		if (numRocks > rocks.length){
 			var radius = Math.floor(Math.random() * (80 - 20)) + 20;
 			var x = canvas.width;
 			var y = Math.floor(Math.random() * canvas.height);
 			var rock = new Rock(radius, x, y);
 			rocks.push(rock);
-		} else {
-			clearInterval(timerId);
+			setTimeout(createRock, rockRate);
 		}
-		// console.log(rocks);
-	}, rockRate);
+	}
 }
 
 var shotFired = false;
@@ -322,7 +345,7 @@ function fireShots(){
 }
 
 function invincible(){
-	if (hitRocks.length >= 12){
+	if (hitRocks >= 15){
 		isInvincible = true;
 		canvas.style.background = "url(/assets/giphy.gif) repeat fixed center";
 		var timerId = window.setTimeout(function(){
@@ -340,7 +363,7 @@ function death(){
 
 function resetGame(){
 	rocks = [];
-	hitRocks = [];
+	hitRocks = 0;
 	ship.y = (canvas.height - 70)/2;
 	ship.x = 20;
 	isGameOver = false;
