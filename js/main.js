@@ -281,14 +281,15 @@ function gameLoop(){
 function hitRock(rock, idx){
 	rock.radius = rock.radius / 2;
 	rock.vertShift = -1;
+	if (!rock.hit) hitRocks++;
 	rock.hit = true;
 	score += Math.round(50 * rock.radius);
 	var newRock = new Rock(rock.radius, rock.x, rock.y);
 	newRock.vertShift = -rock.vertShift;
 	newRock.hit = true;
+	hitRocks++;
 	// console.log(rocks);
 	rocks.splice(idx, 0, newRock);
-	hitRocks += 2;
 	// hitRocks.push(newRock);
 	// hitRocks.push(rock);
 	// console.log(hitRocks)
