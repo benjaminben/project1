@@ -13,17 +13,24 @@ canvas {
 	border: 1px solid black;
 	display: block;
 	margin: 0 auto;
-/*	background: url(/assets/giphy.gif) repeat fixed center;
-*/	background-size: 200px 150px;
-	background-color: black;
+	background: url('/assets/stars.jpg') no-repeat center center fixed;
+	background-size: cover;
 	z-index: 0;
-	/*height: 100%;
-	width: 100%;*/
+}
+
+main {
+	width: 700px;
+	height: 450px;
+	position: fixed;
+	margin: 0 50%;
+	transform: translate(-50%, 0);
+	display: block;
+	top: 0px;
 }
 
 #score{
 	position: absolute;
-	right: 5%;
+	right: 2%;
 	top: 2%;
 	z-index: 5;
 	font-size: 25px;
@@ -33,14 +40,14 @@ canvas {
 
 #lives{
 	position: absolute;
-	left: 5%;
+	left: 2%;
 	top: 2%;
 	z-index: 5;
 }
 .life{
-	background: url(/assets/kanye_happy.png);
-	width: 50px;
-	height: 50px;
+	background: url(/assets/ship_sprite.png);
+	width: 40px;
+	height: 40px;
 	background-size: 100% 100%;
 	display: inline-block;
 }

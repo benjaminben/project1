@@ -17,28 +17,9 @@
 var canvas = document.getElementById("theCanvas");
 var ctx = canvas.getContext("2d");
 
-// var count = 0;
-// var animX;
-// var animY;
-
-// // var img = new Image();
-// // img.src = "/assets/asteroid_sprites.png";
-// // img.onload = draw;
-
-// // function draw(){
-// // 	requestAnimationFrame(draw);
-// // 	animX = (count % 9) * 128;
-// // 	animY = Math.floor(count / 9) * 128;
-// // 	ctx.drawImage(img, animX, animY, 128, 128, 100, 100, 128, 128);
-// // 	if(count == 149)
-// // 		count = 0;
-// // 	else
-// // 		count++
-// // }
-
 var startTime;
 var now = Date.now();
-var rockRate = 3000;
+var rockRate = 2000;
 
 // window.requestAnimFram = (function (callback){
 // 	return window.requestAnimationFrame || 
@@ -121,11 +102,11 @@ var Shot = function(x, y){
 }
 
 setInterval(function(){
-	if (dx < 9) dx++;
+	if (dx < 8) dx++;
 }, 10000);
 setInterval(function(){
-	if (rockRate > 750) rockRate -= 250;
-}, 15000);
+	if (rockRate > 500) rockRate -= 250;
+}, 5000);
 
 //MAIN LOOP
 var game;
@@ -146,10 +127,7 @@ var run = function() {
 	isGameOver = false;
 }
 
-
 var finalScore;
-
-
 
 startGame();
 
@@ -157,24 +135,73 @@ var score = 0;
 document.getElementById('score').innerHTML = score;
 var life = document.getElementsByClassName('life');
 
+// var kHead = document.createElement('img');
+// kHead.src = "/assets/kanye_happy.png"
+
+// function headSwap(head, image1, image2){
+// 	var timerId = setInterval(function(){
+
+// 	}, 1000)
+// }
+
+var count = 0;
+var animX;
+var animY;
+
+var img = new Image();
+img.src = "/assets/asteroid_sprites.png";
+
+// function drawLeft(){
+// 	requestAnimationFrame(drawLeft);
+// 	animX = (count % 8) * 128;
+// 	animY = Math.floor(count / 8) * 128;
+// 	ctx.drawImage(img, animX, animY, 128, 128, 100, 100, 128, 128);
+// 	if (count == 32) count = 0;
+// 	else count++;
+// }
+
+// var rockLeft = ctx.drawImage(img, animX, animY, 128, 128, 100, 100, 128, 128);
+
+// img.onload = rockLeft;
+
 function drawRock(){
-	
+
 	rocks.forEach(function(rock){
+
+
+		// ctx.beginPath();
+		// ctx.arc(rock.x, rock.y, rock.radius, 0, Math.PI*2);
+		// ctx.fillStyle = "#0095DD";
+		// ctx.fill();
+		// ctx.closePath();
+		function drawLeft(){
+			animX = (count % 8) * 128;
+			animY = Math.floor(count / 8) * 128;
+			ctx.drawImage(img, animX, animY, 128, 128, rock.x - rock.radius * 1.5, rock.y - rock.radius * 1.5, rock.radius * 3, rock.radius * 3);
+			if(count == 32)
+				count = 0;
+			else
+				count++
+		}
 		ctx.beginPath();
+		drawLeft();
 		ctx.arc(rock.x, rock.y, rock.radius, 0, Math.PI*2);
-		ctx.fillStyle = "#0095DD";
-		ctx.fill();
+		// ctx.fillStyle = "#0095DD";
+		// ctx.fill();
 		ctx.closePath();
-	});
+		// ctx.clearRect(rock.x - rock.radius, rock.y - rock.radius, rock.radius * 2, rock.radius * 2);
+	})
 }
 
 var shipColor = "#0095DD";
 
 function drawShip(){
+var shipSprite = document.createElement('img');
+shipSprite.src = "/assets/ship_sprite.png";
+
 	ctx.beginPath();
 	ctx.rect(ship.x, ship.y, ship.width, ship.height);
-	ctx.fillStyle = shipColor;
-	ctx.fill();
+	ctx.drawImage(shipSprite, ship.x - 10, ship.y, ship.width + 20, ship.height);
 	ctx.closePath();
 }
 
@@ -183,7 +210,7 @@ function drawShot(){
 	shots.forEach(function(shot){
 		ctx.beginPath();
 		ctx.arc(shot.x, shot.y, shot.radius, 0, Math.PI*2);
-		ctx.fillStyle = "#95DD00";
+		ctx.fillStyle = "#D1FFFF";
 		ctx.fill();
 		ctx.closePath();
 	});
@@ -193,12 +220,8 @@ function drawShot(){
 function gameLoop(){
 	now = Date.now();
 	var dt = (now-startTime)/1000;
-	// console.log(dt);
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.fillStyle = "black";
 	ctx.fill;
-	// console.log(hitRocks);
-	// console.log(isInvincible);
 	
 	//SCORE-KEEPING
 	document.getElementById('score').innerHTML = score;
@@ -254,7 +277,7 @@ function gameLoop(){
 
 	//WHEN PLAYER GETS HIT
 	for(i = 0; i < rocks.length; i++){
-		if (playerHit(ship, rocks[i]) && isInvincible === false && isGameOver === false){
+		if (playerHit(ship, rocks[i]) && isInvincible === false && isGameOver === false && rocks[i].radius >= 3){
 			// console.log('collision');
 			death();
 			resetGame();
@@ -320,7 +343,7 @@ function createRocks(numRocks){
 	function createRock(){		
 		if (numRocks > rocks.length){
 			var radius = Math.floor(Math.random() * (80 - 20)) + 20;
-			var x = canvas.width;
+			var x = canvas.width+radius;
 			var y = Math.floor(Math.random() * canvas.height);
 			var rock = new Rock(radius, x, y);
 			rocks.push(rock);
@@ -346,11 +369,13 @@ function fireShots(){
 }
 
 function invincible(){
-	if (hitRocks >= 15){
+	if (hitRocks >= 10){
 		isInvincible = true;
-		canvas.style.background = "url(/assets/giphy.gif) repeat fixed center";
-		var timerId = window.setTimeout(function(){
-			canvas.style.background = "black";
+		canvas.style.background = "url(/assets/giphy.gif) no-repeat center center fixed";
+		canvas.style.backgroundSize = "cover";
+		var timerId = setTimeout(function(){
+			canvas.style.background = "url('/assets/stars.jpg') no-repeat center center fixed";
+			canvas.style.backgroundSize = 'cover';
 			isInvincible = false;
 		}, 10000)
 	}
@@ -381,6 +406,7 @@ function gameOver(){
 				ship.lives = 3;
 				score = 0;
 				dx = 2;
+				rockRate = 2000;
 				youLose.style.display = "none";
 				life[0].style.display = "inline-block";
 				life[1].style.display = "inline-block";
