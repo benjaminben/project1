@@ -66,12 +66,12 @@ var ship = {
 	lives: 3
 };
 
-var arkitect = new Audio('assets/arkitect.mp3');
+var arkitect = new Audio('./assets/arkitect.mp3');
 var speaker = document.getElementById('speaker');
 
 var count = 0;
 var img = new Image();
-img.src = "assets/asteroid_sprites.png";
+img.src = "./assets/asteroid_sprites.png";
 
 var game;
 var startTime;
@@ -159,7 +159,7 @@ function drawRocks(){
 
 function drawShip(){
 	var shipSprite = document.createElement('img');
-	shipSprite.src = "assets/ship_sprite.png";
+	shipSprite.src = "./assets/ship_sprite.png";
 	ctx.beginPath();
 	ctx.rect(ship.x, ship.y, ship.width, ship.height);
 	ctx.drawImage(shipSprite, ship.x - 10, ship.y, ship.width + 20, ship.height);
@@ -239,10 +239,10 @@ var shotHit = function(shot, rock) {
 function invincible(){
 	if (hitRocks >= 15){
 		isInvincible = true;
-		canvas.style.background = "url(assets/giphy.gif) no-repeat center center fixed";
+		canvas.style.background = "url('./assets/giphy.gif') no-repeat center center fixed";
 		canvas.style.backgroundSize = "cover";
 		var timerId = setTimeout(function(){
-			canvas.style.background = "url(assets/stars.jpg) no-repeat center center fixed";
+			canvas.style.background = "url('./assets/stars.jpg') no-repeat center center fixed";
 			canvas.style.backgroundSize = "cover";
 			isInvincible = false;
 		}, 10000)
@@ -336,11 +336,11 @@ arkitect.addEventListener('ended', function(){
 speaker.addEventListener('click', function(){
 	if (arkitect.volume > 0) {
 		arkitect.volume = 0;
-		this.innerHTML = "<img src='assets/speaker_off.png'></img>"	
+		this.innerHTML = "<img src='./assets/speaker_off.png'></img>"	
 	} 
 	else {
 		arkitect.volume = 1;
-		this.innerHTML = "<img src='assets/speaker_on.png'></img>"
+		this.innerHTML = "<img src='./assets/speaker_on.png'></img>"
 	}
 })
 
