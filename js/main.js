@@ -239,10 +239,10 @@ var shotHit = function(shot, rock) {
 function invincible(){
 	if (hitRocks >= 15){
 		isInvincible = true;
-		canvas.style.background = "url('./assets/giphy.gif') no-repeat center center fixed";
+		canvas.style.background = "url('./assets/giphy.gif')";
 		canvas.style.backgroundSize = "cover";
 		var timerId = setTimeout(function(){
-			canvas.style.background = "url('./assets/stars.jpg') no-repeat center center fixed";
+			canvas.style.background = "url('./assets/stars.jpg')";
 			canvas.style.backgroundSize = "cover";
 			isInvincible = false;
 		}, 10000)
