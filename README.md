@@ -2,6 +2,8 @@
 
 Hanging out in the Asteroid Belt, man. Got a bunch of rocks to hit. They just keep on coming. Make sure to dodge and hit them. It'll boost your high score and ego. 
 
+http://benjaminben.github.io/project1/
+
 <h2>USER STORIES</h2>
 
 - [x] As a user, I want to be able to see my score to know how my current round compares to other rounds
