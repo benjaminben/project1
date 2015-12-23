@@ -50,6 +50,7 @@ var isIntro = true;
 var isInvincible = false;
 var score = 0;
 var finalScore;
+var highScore = localStorage.getItem("highScore");
 
 var rocks = [];
 var hitRocks = 0;
@@ -125,12 +126,21 @@ var unpauseGame = function(e) {
 	}
 }
 
+// if (localStorage.getItem("highScore")) {
+// 	console.log("woooord");
+// }
+
 function startGame(){
 	marquee.style.display = "none";
 	createRocks(Infinity);
 	drawShip();
 	run();
 	arkitect.play();
+	songDataEnter();
+	setTimeout(function() {
+		songDataExit();
+	}, 3000)
+	// localStorage.setItem("highScore", "flute");
 }
 
 var pause = function() {
@@ -145,6 +155,11 @@ var run = function() {
 	startTime = now;
 	isGameOver = false;
 }
+
+// function songDataEnter(){
+// 	console.log('word');
+// 	songData.style.display = "block";
+// }
 
 document.getElementById('score').innerHTML = score;
 
@@ -166,7 +181,7 @@ function drawShip(){
 	ctx.closePath();
 }
 
-function drawShot(){	
+function drawShot(){
 	shots.forEach(function(shot){
 		ctx.beginPath();
 		ctx.arc(shot.x, shot.y, shot.radius, 0, Math.PI*2);
@@ -210,7 +225,7 @@ function createRocks(numRocks){
 	var rock = new Rock(radius, x, y);
 
 	setTimeout(createRock, rockRate);
-	function createRock(){		
+	function createRock(){
 		if (numRocks > rocks.length){
 			var radius = Math.floor(Math.random() * (80 - 20)) + 20;
 			var x = canvas.width+radius;
@@ -254,7 +269,7 @@ function death(){
 	life[ship.lives].style.display = "none";
 }
 
-function resetGame(){
+function resetRound(){
 	rocks = [];
 	hitRocks = 0;
 	ship.y = (canvas.height - 70)/2;
@@ -262,23 +277,68 @@ function resetGame(){
 	isGameOver = false;
 }
 
+function resetGame(){
+	rocks = [];
+	hitRocks = 0;
+	ship.y = (canvas.height - 70)/2;
+	ship.x = 20;
+	isGameOver = false;
+	ship.lives = 3;
+	score = 0;
+	dx = 2;
+	rockRate = 2000;
+	marquee.style.display = "none";
+	life[0].style.display = "inline-block";
+	life[1].style.display = "inline-block";
+	life[2].style.display = "inline-block";
+	setTimeout(function() {
+		console.log('cows');
+		songDataExit();
+	}, 3000);
+}
+
+function getUserInfo() {
+	ship.lives = 3;
+	marqueeUpper.innerHTML = "WAIT!<br>ONE THING:"
+	marqueeLower.innerHTML = "save score? enter name:" + "<br>" +
+													 "<form id='saveNameForm'>" +
+													 	"<input id='nameInput' placeholder='name goes here'>" +
+													 	"</input></form>";
+$("#saveNameForm").submit(function() {
+	storeName();
+	resetGame();
+	return false;
+})
+}
+
+function storeName() {
+	var userName = document.getElementById("nameInput").value;
+	localStorage.setItem("userName", userName);
+}
+
+function setHighScore() {
+		finalScore = score;
+		if (finalScore > highScore || highScore === null) {
+			localStorage.setItem("highScore", finalScore)
+			highScore = localStorage.getItem("highScore");
+		}
+}
+
 function gameOver(){
 	if (ship.lives < 1) {
 		isGameOver = true;
+		setHighScore();
 		marquee.style.display = "block";
 		marqueeUpper.innerHTML = "GAME OVER";
 		marqueeLower.innerHTML = "(space to reset)";
+		songDataEnter();
 		var timerId = setTimeout(function(){
 			if (spacePressed){
-				resetGame();
-				ship.lives = 3;
-				score = 0;
-				dx = 2;
-				rockRate = 2000;
-				marquee.style.display = "none";
-				life[0].style.display = "inline-block";
-				life[1].style.display = "inline-block";
-				life[2].style.display = "inline-block";
+				if (localStorage.getItem('userName')) {
+					resetGame();
+				} else {
+					getUserInfo();
+				}
 			}
 		}, 1000);
 	}
@@ -295,7 +355,7 @@ function keyDownHandler(e) {
     }
     else if(e.keyCode == 38) {
     	upPressed = true
-    } 
+    }
     else if(e.keyCode == 40) {
     	downPressed = true
     }
@@ -315,7 +375,7 @@ function keyUpHandler(e) {
     }
     else if(e.keyCode == 38) {
     	upPressed = false
-    } 
+    }
     else if(e.keyCode == 40) {
     	downPressed = false
     }
@@ -336,8 +396,8 @@ arkitect.addEventListener('ended', function(){
 speaker.addEventListener('click', function(){
 	if (arkitect.volume > 0) {
 		arkitect.volume = 0;
-		this.innerHTML = "<img src='./assets/speaker_off.png'></img>"	
-	} 
+		this.innerHTML = "<img src='./assets/speaker_off.png'></img>"
+	}
 	else {
 		arkitect.volume = 1;
 		this.innerHTML = "<img src='./assets/speaker_on.png'></img>"
@@ -349,10 +409,10 @@ function gameLoop(){
 	var dt = (now-startTime)/1000;
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.fill;
-	
+
 	//SCORE-KEEPING
 	document.getElementById('score').innerHTML = score;
-	
+
 	drawRocks();
 	drawShip();
 	drawShot();
@@ -369,11 +429,11 @@ function gameLoop(){
 		if (rocks[i].x < 0-rocks[i].radius) {
 			if (!isGameOver) score += Math.round(100 * rocks[i].radius);
 			if (rocks[i].hit){
-				hitRocks--;	
+				hitRocks--;
 			}
 			if(rocks[i])
 			rocks.splice(rocks[i], 1);
-		}	
+		}
 	}
 
 	//SHOT MOVEMENT
@@ -399,19 +459,19 @@ function gameLoop(){
 	for(i = 0; i < rocks.length; i++){
 		if (playerHit(ship, rocks[i]) && isInvincible === false && isGameOver === false && rocks[i].radius >= 4){
 			death();
-			resetGame();
+			resetRound();
 		}
 	}
 
 	//STEERING CONTROLS
 	if (rightPressed && ship.x < canvas.width-ship.width){
-    	ship.x += 6; 
+    	ship.x += 6;
     } else if (leftPressed && ship.x > 0){
     	ship.x -= 6;
     }
     if (upPressed && ship.y > 0){
     	ship.y -= 6;
-    } 
+    }
     else if (downPressed && ship.y < canvas.height-ship.height){
     	ship.y += 6;
     }
@@ -421,3 +481,21 @@ function gameLoop(){
 }
 
 intro();
+
+
+var songData = document.getElementById('songData');
+
+var right = $('#songData').offset().right
+
+var songDataShowing = false;
+
+function songDataEnter(){
+	$('#songData').css({right:right}).animate({right: '0px'}, "slow");
+	songDataShowing = true;
+}
+
+function songDataExit(){
+	$('#songData').css({right:right}).animate({right: '-200px'}, "slow");
+	songDataShowing = false;
+	console.log('fur');
+}
