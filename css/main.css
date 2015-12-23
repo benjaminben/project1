@@ -64,7 +64,6 @@ main {
 }
 
 #songData {
-	/*background-color: red;*/
 	position: absolute;
 	width: 100%;
 	font-size: 10px;
@@ -89,6 +88,7 @@ main {
 	position: absolute;
 	bottom: 2%;
 	right: 2%;
+	cursor: pointer;
 }
 
 #speaker img {
@@ -113,4 +113,32 @@ main {
 
 #marquee h2{
 	font-size: 25px;
+}
+
+input {
+  background-color:rgba(0, 0, 0, 0);
+	color: white;
+	text-align: center;
+  font-size: 25px;
+  font-family: 'Press Start 2P';
+  border-style: solid;
+	border-width: 0px 0px 1px 0px;
+  outline:none;
+  margin: 10px auto;
+}
+
+::-webkit-input-placeholder {
+  color: white;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+  color: white;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+  color: white;
+}
+
+:-ms-input-placeholder {
+  color: white;
 }

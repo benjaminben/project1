@@ -55,6 +55,7 @@ var highScore = localStorage.getItem("highScore");
 var rocks = [];
 var hitRocks = 0;
 var rockRate = 2000;
+var pausedRockRate;
 
 var shots = [];
 var shotFired = false;
@@ -69,6 +70,22 @@ var ship = {
 
 var arkitect = new Audio('./assets/arkitect.mp3');
 var speaker = document.getElementById('speaker');
+
+if (!localStorage.getItem("playSound")) {
+	localStorage.setItem("playSound", true)
+};
+
+function initSound() {
+	if (localStorage.getItem("playSound") === "true") {
+		arkitect.volume = 1;
+		speaker.innerHTML = "<img src='./assets/speaker_on.png'></img>";
+		arkitect.play();
+	} else {
+		arkitect.volume = 0;
+		speaker.innerHTML = "<img src='./assets/speaker_off.png'></img>";
+		arkitect.play();
+	}
+}
 
 var count = 0;
 var img = new Image();
@@ -122,30 +139,29 @@ var pauseGame = function(e) {
 var unpauseGame = function(e) {
 	if (e.keyCode == 80 && isPaused == true) {
 		isPaused = false;
+		rockRate = pausedRockRate;
 		run();
 	}
 }
 
-// if (localStorage.getItem("highScore")) {
-// 	console.log("woooord");
-// }
-
 function startGame(){
 	marquee.style.display = "none";
+	rockRate = 2000;
+	dx = 2;
 	createRocks(Infinity);
 	drawShip();
 	run();
-	arkitect.play();
+	initSound();
 	songDataEnter();
 	setTimeout(function() {
 		songDataExit();
 	}, 3000)
-	// localStorage.setItem("highScore", "flute");
 }
 
 var pause = function() {
 	isPaused = true;
 	clearInterval(game);
+	pausedRockRate = rockRate;
 	instructions();
 }
 
@@ -155,11 +171,6 @@ var run = function() {
 	startTime = now;
 	isGameOver = false;
 }
-
-// function songDataEnter(){
-// 	console.log('word');
-// 	songData.style.display = "block";
-// }
 
 document.getElementById('score').innerHTML = score;
 
@@ -252,16 +263,14 @@ var shotHit = function(shot, rock) {
 };
 
 function invincible(){
-	if (hitRocks >= 15){
-		isInvincible = true;
-		canvas.style.background = "url('./assets/giphy.gif')";
+	isInvincible = true;
+	canvas.style.background = "url('./assets/giphy.gif')";
+	canvas.style.backgroundSize = "cover";
+	var timerId = setTimeout(function(){
+		canvas.style.background = "url('./assets/stars.jpg')";
 		canvas.style.backgroundSize = "cover";
-		var timerId = setTimeout(function(){
-			canvas.style.background = "url('./assets/stars.jpg')";
-			canvas.style.backgroundSize = "cover";
-			isInvincible = false;
-		}, 10000)
-	}
+		isInvincible = false;
+	}, 10000)
 }
 
 function death(){
@@ -291,10 +300,7 @@ function resetGame(){
 	life[0].style.display = "inline-block";
 	life[1].style.display = "inline-block";
 	life[2].style.display = "inline-block";
-	setTimeout(function() {
-		console.log('cows');
-		songDataExit();
-	}, 3000);
+	// songDataExit();
 }
 
 function getUserInfo() {
@@ -304,11 +310,13 @@ function getUserInfo() {
 													 "<form id='saveNameForm'>" +
 													 	"<input id='nameInput' placeholder='name goes here'>" +
 													 	"</input></form>";
-$("#saveNameForm").submit(function() {
-	storeName();
-	resetGame();
-	return false;
-})
+	var input = document.getElementById("nameInput");
+	input.setAttribute('size',input.getAttribute('placeholder').length);
+	$("#saveNameForm").submit(function() {
+		storeName();
+		resetGame();
+		return false;
+	})
 }
 
 function storeName() {
@@ -325,23 +333,25 @@ function setHighScore() {
 }
 
 function gameOver(){
-	if (ship.lives < 1) {
-		isGameOver = true;
-		setHighScore();
-		marquee.style.display = "block";
-		marqueeUpper.innerHTML = "GAME OVER";
-		marqueeLower.innerHTML = "(space to reset)";
-		songDataEnter();
-		var timerId = setTimeout(function(){
-			if (spacePressed){
-				if (localStorage.getItem('userName')) {
-					resetGame();
-				} else {
-					getUserInfo();
-				}
+	isGameOver = true;
+	setHighScore();
+	marquee.style.display = "block";
+	marqueeUpper.innerHTML = "GAME OVER";
+	marqueeLower.innerHTML = "(space to reset)";
+	showSongData = true;
+	songDataEnter();
+	var timerId = setTimeout(function(){
+		if (spacePressed){
+			if (localStorage.getItem('userName')) {
+				resetGame();
+			} else {
+				getUserInfo();
 			}
-		}, 1000);
-	}
+			setTimeout(function() {
+				songDataExit();
+			}, 3000);
+		}
+	}, 1000);
 }
 
 document.addEventListener("keydown", keyDownHandler, false);
@@ -387,21 +397,28 @@ function keyUpHandler(e) {
     }
 }
 
+
 document.addEventListener("keydown", pauseGame, false);
 
 arkitect.addEventListener('ended', function(){
 	this.currentTime = 0;
 	this.play();
 }, false);
-speaker.addEventListener('click', function(){
-	if (arkitect.volume > 0) {
+
+function toggleSound() {
+	if (localStorage.getItem("playSound") === "true") {
 		arkitect.volume = 0;
-		this.innerHTML = "<img src='./assets/speaker_off.png'></img>"
-	}
-	else {
+		localStorage.setItem("playSound", "false");
+		speaker.innerHTML = "<img src='./assets/speaker_off.png'></img>"
+	} else {
 		arkitect.volume = 1;
-		this.innerHTML = "<img src='./assets/speaker_on.png'></img>"
+		localStorage.setItem("playSound", "true");
+		speaker.innerHTML = "<img src='./assets/speaker_on.png'></img>"
 	}
+}
+
+speaker.addEventListener('click', function(){
+	toggleSound();
 })
 
 function gameLoop(){
@@ -476,26 +493,31 @@ function gameLoop(){
     	ship.y += 6;
     }
 
-    invincible();
+  if (hitRocks >= 15){
+		invincible();
+	}
+
+  if (ship.lives < 1) {
     gameOver();
+	}
+
 }
 
 intro();
-
 
 var songData = document.getElementById('songData');
 
 var right = $('#songData').offset().right
 
-var songDataShowing = false;
+var showSongData = false;
 
 function songDataEnter(){
+	showSongData = true;
 	$('#songData').css({right:right}).animate({right: '0px'}, "slow");
-	songDataShowing = true;
 }
 
 function songDataExit(){
+	showSongData = false;
 	$('#songData').css({right:right}).animate({right: '-200px'}, "slow");
-	songDataShowing = false;
 	console.log('fur');
 }
