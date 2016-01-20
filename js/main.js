@@ -111,10 +111,6 @@ function instructions() {
 	isIntro = false;
 };
 
-function pauseScreen() {
-	modal("move: arrows<br>fire: space<br>pause: p", "<br>hit rocks for<br>INVINCIBILITY", run);
-}
-
 var modal = function(upper, lower, next) {
 	marquee.style.display = "block";
 	marqueeUpper.innerHTML = upper;
@@ -129,18 +125,42 @@ var modal = function(upper, lower, next) {
 	document.addEventListener("keydown", nextHandler, false);
 }
 
-var pauseGame = function(e) {
-	if (e.keyCode == 80) {
-		isPaused = true;
-		pause();
-	}
-}
+// var pause = function() {
+// 	game = clearInterval(game);
+// 	pausedRockRate = rockRate;
+// 	instructions();
+// }
 
-var unpauseGame = function(e) {
-	if (e.keyCode == 80 && isPaused == true) {
-		isPaused = false;
-		rockRate = pausedRockRate;
-		run();
+// var pauseGame = function(e) {
+// 	if (e.keyCode == 80) {
+// 		isPaused = true;
+// 		pause();
+// 	}
+// }
+
+// var unpauseGame = function(e) {
+// 	if (e.keyCode == 80 && isPaused == true) {
+// 		isPaused = false;
+// 		rockRate = pausedRockRate;
+// 	}
+// }
+
+function pauseGame(e) {
+	if (e.keyCode == 80) {
+		if (!isPaused) {
+			game = clearInterval(game);
+			isPaused = true;
+			marqueeUpper.innerHTML = "move: arrows<br>fire: space<br>pause: p";
+			marqueeLower.innerHTML = "<br>hit rocks for<br>INVINCIBILITY";
+			marquee.style.display = "block"
+			console.log(marqueeUpper);
+			songDataEnter();
+		} else if (isPaused) {
+			game = setInterval(gameLoop, 10);
+			isPaused = false;
+			marquee.style.display = "none";
+			songDataExit();
+		}
 	}
 }
 
@@ -158,16 +178,9 @@ function startGame(){
 	}, 3000)
 }
 
-var pause = function() {
-	isPaused = true;
-	clearInterval(game);
-	pausedRockRate = rockRate;
-	instructions();
-}
-
 var run = function() {
 	marquee.style.display = "none";
-    game = setInterval(gameLoop, 10);
+  game = setInterval(gameLoop, 10);
 	startTime = now;
 	isGameOver = false;
 }
@@ -343,13 +356,11 @@ function gameOver(){
 	var timerId = setTimeout(function(){
 		if (spacePressed){
 			if (localStorage.getItem('userName')) {
+				songDataExit();
 				resetGame();
 			} else {
 				getUserInfo();
 			}
-			setTimeout(function() {
-				songDataExit();
-			}, 3000);
 		}
 	}, 1000);
 }
