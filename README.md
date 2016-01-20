@@ -1,4 +1,4 @@
-<h1>SRiS (originally muna v. asteroids)</h1>
+<h1>SRiS</h1>
 
 Hanging out in the Asteroid Belt, man. Got a bunch of rocks to hit. They just keep on coming. Make sure to dodge and hit them. It'll boost your high score and ego. 
 
