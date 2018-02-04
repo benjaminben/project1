@@ -13,20 +13,21 @@ var Rock = function(radius, x, y){
   this.animY = 0;
   this.count = 0;
   this.drawSprite = function() {
-    this.animY = this.count * 128;
-    ctx.drawImage(img, 0, this.animY, 128, 128, this.x - this.radius * 2, this.y - this.radius * 2, this.radius * 4, this.radius * 4);
-    if(this.count == 49)
-      this.count = 0;
-    else
-      this.count++
+		this.animX = (this.count % 8) * 128;
+		this.animY = Math.floor(this.count / 8) * 128;
+		ctx.drawImage(img, this.animX, this.animY, 128, 128, this.x - this.radius * 1.5, this.y - this.radius * 1.5, this.radius * 3, this.radius * 3);
+		if(this.count == 32)
+			this.count = 0;
+		else
+			this.count++
   }
 }
 
 var Shot = function(x, y){
   this.x = x;
   this.y = y;
-  this.width = 15;
-  this.height = 15;
+  this.width = 12;
+  this.height = 4;
 }
 
 var canvas = document.getElementById("canvas");
@@ -34,8 +35,6 @@ canvas.width = canvas.scrollWidth;
 canvas.height = canvas.scrollHeight;
 var ctx = canvas.getContext("2d");
 
-var initialRockVelocity = 0.1;
-var rockVelocity = initialRockVelocity;
 var upPressed = false;
 var downPressed = false;
 var rightPressed = false;
@@ -56,8 +55,9 @@ var scores = [];
 var rocks = [];
 var hitRocks = 0;
 var rockRate = 2000;
-var rockVelocity = 0.2;
 var pausedRockRate;
+var initialRockVelocity = 2;
+var rockVelocity = initialRockVelocity;
 
 var shots = [];
 var shotFired = false;
@@ -67,10 +67,12 @@ var ship = {
   width: 50,
   lives: 3
 };
-var shipVelocity = 0.2
+var shipVelocity = 6
 
 var shipSprite = document.createElement('img');
 shipSprite.src = "/assets/ship_sprite.png";
+var shipInvSprite = document.createElement('img');
+shipInvSprite.src = "/assets/ship_sprite_invincible.png";
 var giphy = "/assets/giphy.gif",
     starsBg = "/assets/stars.jpg"
 
@@ -102,7 +104,7 @@ var startTime;
 var now = Date.now();
 
 setInterval(function(){
-  if (rockVelocity < 1 && !isPaused) rockVelocity += 0.1;
+  if (rockVelocity < 10 && !isPaused) rockVelocity += 1;
 }, 10000);
 setInterval(function(){
   if (rockRate > 300 && !isPaused) rockRate -= 100;
@@ -196,7 +198,8 @@ function startGame(){
 
 var run = function() {
   marquee.style.display = "none";
-  game = setInterval(gameLoop, 10);
+  // game = setInterval(gameLoop, 10);
+	game = requestAnimationFrame(gameLoop);
   startTime = now;
   isGameOver = false;
 }
@@ -222,17 +225,22 @@ function drawRocks(){
 
 function drawShip(){
   ctx.beginPath();
-  ctx.drawImage(shipSprite, ship.x, ship.y, ship.width, ship.height);
+  ctx.drawImage(
+		isInvincible ? shipInvSprite : shipSprite,
+		ship.x,
+		ship.y,
+		ship.width,
+		ship.height
+	);
   ctx.closePath();
 }
 
 function drawShot(){
   var shotSprite = document.createElement('img');
-  shotSprite.src = "https://cdn.shopify.com/s/files/1/1061/1924/products/Money_with_Wings_Emoji_grande.png?v=1480481040";
   shots.forEach(function(shot){
     ctx.beginPath();
-    ctx.rect(shot.x, shot.y, shot.width, shot.height);
-    ctx.drawImage(shotSprite, shot.x, shot.y, shot.width, shot.height);
+		ctx.fillStyle = '#98d5b5';
+    ctx.fillRect(shot.x, shot.y, shot.width, shot.height);
     ctx.closePath();
   });
 }
@@ -545,7 +553,7 @@ function gameLoop(){
       ship.y += shipVelocity;
     }
 
-  if (hitRocks >= 15 && !isInvincible){
+  if (hitRocks >= 20 && !isInvincible){
     invincible();
   }
 
