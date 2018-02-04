@@ -6,7 +6,7 @@ var express = require('express'),
     http = require('http');
     bp = require('body-parser')
 
-app.set('port', process.env.PORT || 8080);
+app.set('port', process.env.PORT || 6000);
 app.set('views', __dirname + '/views');
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");

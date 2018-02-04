@@ -1,4 +1,4 @@
-var baseUrl = 'http://bb.ngrok.io'
+var baseUrl = '/api'
 var srisSelected = true;
 
 var Rock = function(radius, x, y){
