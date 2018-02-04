@@ -127,6 +127,13 @@ input {
   margin: 10px auto;
 }
 
+#scoreSubmit {
+  cursor: pointer;
+}
+.score {
+  display: block;
+}
+
 ::-webkit-input-placeholder {
   color: white;
 }

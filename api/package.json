@@ -1,0 +1,21 @@
+{
+  "name": "keef",
+  "version": "1.0.0",
+  "engines": {
+    "node": "5.0.0",
+    "npm": "3.3.6"
+  },
+  "description": "keef's bday",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "http": "0.0.0",
+    "mongodb": "^2.2.5"
+  }
+}
