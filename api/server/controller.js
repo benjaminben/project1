@@ -30,6 +30,7 @@ module.exports = {
           }
           else{
             console.log('score posted:', score)
+            res.sendStatus(200)
           }
         }
       );

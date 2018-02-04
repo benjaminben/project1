@@ -1,19 +1,5 @@
-// var baseUrl = 'http://chiefkeef.herokuapp.com/sris/scores'
 var baseUrl = 'http://bb.ngrok.io'
 var srisSelected = true;
-
-$.ajax({
-	method: 'GET',
-	url: baseUrl,
-	success: function(res) {
-		console.log('suxas', res)
-		scores = res.scores;
-	},
-	error: function(res) {
-		console.log('sux ass')
-		console.log(res)
-	}
-})
 
 var Rock = function(radius, x, y){
   this.radius = radius;
@@ -43,7 +29,7 @@ var Shot = function(x, y){
   this.height = 15;
 }
 
-var canvas = document.getElementById("theCanvas");
+var canvas = document.getElementById("canvas");
 canvas.width = canvas.scrollWidth;
 canvas.height = canvas.scrollHeight;
 var ctx = canvas.getContext("2d");
@@ -159,7 +145,6 @@ function getScores() {
 }
 
 function postScore(name, score) {
-	console.log('posting...')
 	$.ajax({
     method: 'POST',
     url: baseUrl + '/scores',
@@ -167,7 +152,6 @@ function postScore(name, score) {
     data: JSON.stringify({name: name, score: score}),
     success: function(res) {
 			console.log('posted', res)
-      console.log(res)
     },
     error: function(res) {
       console.log(res)
@@ -288,7 +272,6 @@ function createRocks(numRocks){
 
   setTimeout(createRock, rockRate);
   function createRock(){
-		console.log(rocks.length)
     if( !isPaused ){
       var radius = Math.floor(Math.random() * (80 - 20)) + 20;
       var x = canvas.width+radius;
@@ -591,20 +574,20 @@ function songDataExit(){
   $('#songData').css({right:right}).animate({right: '-200px'}, "slow");
 }
 
-$('#theCanvas').on('click', function(e){
-  e.stopPropagation();
-  srisSelected = true;
-})
-$('body').on('click', function(e){
-  if( e.target !== $('#sris') || e.target.parents("#theCanvas").length ){
-    if( !isPaused && !isIntro && !isGameOver ){
-      pauseGame(e);
-    }
-    // srisSelected = false;
-  }
-})
+// $('#canvas').on('click', function(e){
+//   e.stopPropagation();
+//   srisSelected = true;
+// })
+// $('body').on('click', function(e){
+//   if( e.target !== $('#sris') || e.target.parents("#canvas").length ){
+//     if( !isPaused && !isIntro && !isGameOver ){
+//       pauseGame(e);
+//     }
+//     // srisSelected = false;
+//   }
+// })
 
-document.querySelector('#theCanvas')
+document.querySelector('#canvas')
   .addEventListener('touchend', function(){
     document.querySelector('#touchblock').style.display = 'table';
 })
