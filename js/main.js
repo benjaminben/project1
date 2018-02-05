@@ -100,7 +100,7 @@
 	var giphy = loc + "/assets/giphy.gif",
 	    starsBg = loc + "/assets/stars.jpg"
 
-	var arkitect = new Audio('/assets/arkitect.mp3');
+	var arkitect = new Audio(loc + "/assets/arkitect.mp3");
 	var speaker = document.getElementById('speaker');
 
 	if (!localStorage.getItem("playSound")) {
