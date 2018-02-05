@@ -110,11 +110,11 @@
 	function initSound() {
 	  if (localStorage.getItem("playSound") === "true") {
 	    arkitect.volume = 1;
-	    speaker.innerHTML = "<img src='/assets/speaker_on.png'></img>";
+	    speaker.innerHTML = "<img src='"+loc+"/assets/speaker_on.png'></img>";
 	    arkitect.play();
 	  } else {
 	    arkitect.volume = 0;
-	    speaker.innerHTML = "<img src='/assets/speaker_off.png'></img>";
+	    speaker.innerHTML = "<img src='"+loc+"/assets/speaker_off.png'></img>";
 	    arkitect.play();
 	  }
 	}
