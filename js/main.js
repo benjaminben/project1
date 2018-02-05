@@ -660,7 +660,7 @@
 	document.onwebkitfullscreenchange =
 	document.onmozfullscreenchange    =
 	function(e) {
-		if (!document.isFullScreen && !document.webkitIsFullScreen && !document.mozIsFullScreen) {
+		if (!document.isFullScreen && !document.webkitIsFullScreen && !document.mozFullScreen) {
 			exitFullscreen()
 		}
 	}
