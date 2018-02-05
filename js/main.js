@@ -9,12 +9,15 @@ cancelAnimationFrame =
 
 var baseUrl = '/api'
 
-var doc = document.documentElement
+var doc = document.documentElement;
+var main = document.querySelector('main');
+var bounds = main.getBoundingClientRect();
 var canvas = document.getElementById("canvas");
 canvas.width = canvas.scrollWidth;
 canvas.height = canvas.scrollHeight;
 var ctx = canvas.getContext("2d");
 window.addEventListener('resize', function(e) {
+	bounds = main.getBoundingClientRect();
 	canvas.width = canvas.scrollWidth;
 	canvas.height = canvas.scrollHeight;
 	if (ship.x < 0) {ship.x = 0}
@@ -142,12 +145,14 @@ var modal = function(upper, lower, next) {
   marqueeLower.innerHTML = lower;
 
   var nextHandler = function(e) {
-		if(e.keyCode == 32) {
+		if(e.type == 'click' || e.keyCode == 32) {
         document.removeEventListener("keydown", nextHandler, false);
+        main.removeEventListener("click", nextHandler, false);
         next();
       }
   };
   document.addEventListener("keydown", nextHandler, false);
+	main.addEventListener("click", nextHandler, false);
 }
 
 function getScores() {
@@ -400,14 +405,19 @@ function gameOver(){
 
 function showScores(html){
   marqueeUpper.innerHTML = '';
-  marqueeLower.innerHTML = html + '<br/><span>(space to restart)</span>';
+  marqueeLower.innerHTML = html + '<br/><span>space / tap to restart</span>';
 
-  document.addEventListener("keyup", function(e){
+  document.addEventListener("keyup", function(e) {
     if( e.keyCode == 32 ){
       resetGame();
       document.removeEventListener(e.type, arguments.callee);
     }
   }, false)
+
+	main.addEventListener("click", function(e) {
+		resetGame()
+		main.removeEventListener(e.type, arguments.callee);
+	}, false)
 }
 
 document.addEventListener("keydown", keyDownHandler, false);
@@ -461,6 +471,38 @@ function keyUpHandler(e) {
     spacePressed = false
   }
 }
+
+function handleTouchStart(e) {
+	var touch = e.targetTouches[0]
+	if (!touch) return;
+	var x = touch.pageX - bounds.x
+	var y = touch.pageY - bounds.y
+	var onPoint = ship.x < x && ship.x+ship.width > x &&
+								ship.y < y && ship.y+ship.height > x
+
+	if (onPoint) {
+		fireShots()
+		main.removeEventListener('touchstart', handleTouchStart)
+		main.addEventListener('touchmove', handleTouchMove)
+		main.addEventListener('touchend', handleTouchEnd)
+	}
+}
+
+function handleTouchMove(e) {
+	e.preventDefault()
+	fireShots()
+	var touch = e.targetTouches[0]
+	ship.x = touch.pageX - bounds.x
+	ship.y = touch.pageY - bounds.y
+}
+
+function handleTouchEnd(e) {
+	main.removeEventListener('touchmove', handleTouchMove)
+	main.removeEventListener('touchend', handleTouchEnd)
+	main.addEventListener('touchstart', handleTouchStart)
+}
+
+main.addEventListener('touchstart', handleTouchStart)
 
 arkitect.addEventListener('ended', function(){
   this.currentTime = 0;
