@@ -1,5 +1,27 @@
+requestAnimationFrame =
+	window.requestAnimationFrame ||
+	window.webkitRequestAnimationFrame ||
+	window.mozRequestAnimationFrame
+cancelAnimationFrame =
+	window.cancelAnimationFrame ||
+	window.webkitCancelAnimationFrame ||
+	window.mozCancelAnimationFrame
+
 var baseUrl = '/api'
-var srisSelected = true;
+
+var doc = document.documentElement
+var canvas = document.getElementById("canvas");
+canvas.width = canvas.scrollWidth;
+canvas.height = canvas.scrollHeight;
+var ctx = canvas.getContext("2d");
+window.addEventListener('resize', function(e) {
+	canvas.width = canvas.scrollWidth;
+	canvas.height = canvas.scrollHeight;
+	if (ship.x < 0) {ship.x = 0}
+	if (ship.x > canvas.width) {ship.x = canvas.width-ship.width}
+	if (ship.y < 0) {ship.y = 0}
+	if (ship.y > canvas.height) {ship.y = canvas.height-ship.height}
+})
 
 var Rock = function(radius, x, y){
   this.radius = radius;
@@ -29,11 +51,6 @@ var Shot = function(x, y){
   this.width = 12;
   this.height = 4;
 }
-
-var canvas = document.getElementById("canvas");
-canvas.width = canvas.scrollWidth;
-canvas.height = canvas.scrollHeight;
-var ctx = canvas.getContext("2d");
 
 var upPressed = false;
 var downPressed = false;
@@ -125,7 +142,7 @@ var modal = function(upper, lower, next) {
   marqueeLower.innerHTML = lower;
 
   var nextHandler = function(e) {
-		if(e.keyCode == 32 && srisSelected) {
+		if(e.keyCode == 32) {
         document.removeEventListener("keydown", nextHandler, false);
         next();
       }
@@ -393,16 +410,8 @@ function showScores(html){
   }, false)
 }
 
-document.addEventListener("keydown", function(e){
-  if( srisSelected ){
-    keyDownHandler(e)
-  }
-}, false);
-document.addEventListener("keyup", function(e){
-  if( srisSelected ){
-    keyUpHandler(e)
-  }
-}, false);
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
 
 function keyDownHandler(e) {
   if(e.keyCode == 39) {
@@ -478,8 +487,6 @@ function gameLoop(){
   if( isPaused ){
     return false
   }
-
-  resize(canvas);
 
   now = Date.now();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -582,20 +589,30 @@ function songDataExit(){
   $('#songData').css({right:right}).animate({right: '-200px'}, "slow");
 }
 
-// $('#canvas').on('click', function(e){
-//   e.stopPropagation();
-//   srisSelected = true;
-// })
-// $('body').on('click', function(e){
-//   if( e.target !== $('#sris') || e.target.parents("#canvas").length ){
-//     if( !isPaused && !isIntro && !isGameOver ){
-//       pauseGame(e);
-//     }
-//     // srisSelected = false;
-//   }
-// })
+var fullscreen = document.getElementById("fullscreen");
+if (!doc.requestFullScreen && !doc.webkitRequestFullScreen && !doc.mozRequestFullScreen) {
+	fullscreen.style.display = 'none'
+} else {
+	doc.requestFullScreen = doc.requestFullScreen || doc.webkitRequestFullScreen || doc.mozRequestFullScreen
+	fullscreen.addEventListener('click', function(e) {
+		enterFullscreen()
+	})
+}
 
-document.querySelector('#canvas')
-  .addEventListener('touchend', function(){
-    document.querySelector('#touchblock').style.display = 'table';
-})
+function enterFullscreen() {
+	doc.requestFullScreen()
+	document.body.className += ' fullscreen'
+}
+
+function exitFullscreen() {
+	document.body.className = document.body.className.replace(' fullscreen', '')
+}
+
+document.onfullscreenchange       =
+document.onwebkitfullscreenchange =
+document.onmozfullscreenchange    =
+function(e) {
+	if (!document.isFullScreen && !document.webkitIsFullScreen && !document.mozIsFullScreen) {
+		exitFullscreen()
+	}
+}
