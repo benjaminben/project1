@@ -1,5 +1,7 @@
 (function() {
 
+	document.querySelector('main').ontouchmove = function(e) {e.preventDefault()}
+
 	requestAnimationFrame =
 		window.requestAnimationFrame ||
 		window.webkitRequestAnimationFrame ||

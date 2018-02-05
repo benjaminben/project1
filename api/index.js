@@ -30,9 +30,6 @@ server.timeout = 1000;
 app.get('/', function(req, res){
   res.json({health: 'a ok'})
 });
-app.get('/sris/api', function(req, res) {
-  res.json({yo: 'gotti'})
-})
 app.get('/scores', function(req, res){
   controller.scores(req, res)
 });
