@@ -94,11 +94,11 @@
 	var shipVelocity = 6
 
 	var shipSprite = document.createElement('img');
-	shipSprite.src = "/assets/ship_sprite.png";
+	shipSprite.src = loc + "/assets/ship_sprite.png";
 	var shipInvSprite = document.createElement('img');
-	shipInvSprite.src = "/assets/ship_sprite_invincible.png";
-	var giphy = "/assets/giphy.gif",
-	    starsBg = "/assets/stars.jpg"
+	shipInvSprite.src = loc + "/assets/ship_sprite_invincible.png";
+	var giphy = loc + "/assets/giphy.gif",
+	    starsBg = loc + "/assets/stars.jpg"
 
 	var arkitect = new Audio('/assets/arkitect.mp3');
 	var speaker = document.getElementById('speaker');
@@ -121,7 +121,7 @@
 
 	var count = 0;
 	var img = new Image();
-	img.src = "/assets/asteroid_sprites.png";
+	img.src = loc + "/assets/asteroid_sprites.png";
 
 	var game;
 	var startTime;
