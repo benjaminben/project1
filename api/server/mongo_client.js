@@ -1,17 +1,18 @@
 (function(){
   var client = require('mongodb').MongoClient,
-      mongodb;
+      mongodb,
+      db;
 
       module.exports = {
         connect: function(dburl, callback) {
           client.connect(dburl,
-            function(err, db){
-              mongodb = db;
+            function(err, client){
+              db = client.db('sris');
               if(callback) { callback(); }
             });
          },
         db: function() {
-          return mongodb;
+          return db;
         },
         close: function() {
           mongodb.close();

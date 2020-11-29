@@ -18,9 +18,9 @@ app.use(bp.urlencoded({ extended: false }));
 app.use(bp.json());
 
 var server = app.listen(app.get('port'), function() {
-  console.log('running on' + app.get('port'));
+  console.log('running on ' + app.get('port'));
 
-  mongodb.connect(config.mongodPath || 'mongodb://localhost:27017/keef_sris', function() {
+  mongodb.connect(config.mongodPath, function() {
     console.log('Connected to MongoDB.');
   });
 

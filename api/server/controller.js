@@ -22,7 +22,7 @@ module.exports = {
     client
       .db()
       .collection('scores')
-      .insert(
+      .insertOne(
         score,
         function(err){
           if( err ){

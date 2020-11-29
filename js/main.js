@@ -13,7 +13,7 @@
 
 	var loc = window.location.href
 	var baseUrl = loc.match(':5000') /* lol */ ?
-								'http://bb.ngrok.io' : 'api'
+								'https://bb.ngrok.io' : 'api'
 
 	var doc = document.documentElement;
 	var main = document.querySelector('main');
